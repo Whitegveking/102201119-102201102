@@ -1,0 +1,5 @@
+<view class="container">
+  <text>项目详情</text>
+  <text>{{project.name}}</text>
+  <text>{{project.description}}</text>
+</view>

@@ -1,0 +1,5 @@
+<view class="container">
+  <text>这是首页</text>
+  <navigator url="../project-list/project-list">查看项目列表</navigator>
+  <navigator url="../profile/profile">个人中心</navigator>
+</view>
