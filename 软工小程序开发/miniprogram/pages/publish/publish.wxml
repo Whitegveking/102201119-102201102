@@ -1,0 +1,25 @@
+<view class="container">
+  <form bindsubmit="onSubmit">
+    <view class="form-item">
+      <text>项目名称:</text>
+      <input name="name" placeholder="输入项目名称" required />
+    </view>
+    <view class="form-item">
+      <text>项目描述:</text>
+      <textarea name="description" placeholder="输入项目描述" required></textarea>
+    </view>
+    <view class="form-item">
+      <text>所需技能:</text>
+      <input name="skills" placeholder="逗号分隔，如设计,编程,市场" />
+    </view>
+    <view class="form-item">
+      <text>项目状态:</text>
+      <picker mode="selector" range="{{statusList}}" bindchange="onStatusChange">
+        <view class="picker">
+          {{status}}
+        </view>
+      </picker>
+    </view>
+    <button formType="submit">发布项目</button>
+  </form>
+</view>

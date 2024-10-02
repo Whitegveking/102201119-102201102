@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="user-info">
+    <image src="{{user.avatarUrl}}" class="avatar"></image>
+    <text class="nickname">{{user.nickName}}</text>
+  </view>
+  <view class="project-section">
+    <text class="section-title">我发布的项目</text>
+    <block wx:for="{{createdProjects}}" wx:key="_id">
+      <view class="project-item" bindtap="goToDetail" data-id="{{item._id}}">
+        <text>{{item.name}}</text>
+      </view>
+    </block>
+  </view>
+  <view class="project-section">
+    <text class="section-title">我参与的项目</text>
+    <block wx:for="{{joinedProjects}}" wx:key="_id">
+      <view class="project-item" bindtap="goToDetail" data-id="{{item._id}}">
+        <text>{{item.name}}</text>
+      </view>
+    </block>
+  </view>
+</view>

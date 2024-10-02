@@ -1,0 +1,14 @@
+<view class="container">
+  <view class="search-bar">
+    <input placeholder="搜索项目" bindinput="onSearchInput" />
+    <button bindtap="onSearch">搜索</button>
+  </view>
+  <view class="project-list">
+    <block wx:for="{{projects}}" wx:key="_id">
+      <view class="project-item" bindtap="goToDetail" data-id="{{item._id}}">
+        <text class="project-name">{{item.name}}</text>
+        <text class="project-status">{{item.status}}</text>
+      </view>
+    </block>
+  </view>
+</view>

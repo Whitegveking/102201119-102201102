@@ -1,0 +1,40 @@
+.container {
+    padding: 20px;
+  }
+  .project-info {
+    margin-bottom: 20px;
+  }
+  .project-name {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .project-description {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  .project-status, .project-skills {
+    margin-top: 5px;
+    font-size: 14px;
+    color: gray;
+  }
+  .member-list {
+    margin-top: 20px;
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .member-list text {
+    display: block;
+    margin-bottom: 5px;
+  }
+  button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #1AAD19;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  

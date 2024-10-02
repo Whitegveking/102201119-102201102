@@ -1,0 +1,34 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/projectDetail/projectDetail",
+    "pages/publish/publish",
+    "pages/profile/profile",
+    "pages/chat/chat"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "ProjectPartner",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "list": [{
+      "pagePath": "pages/index/index",
+      "text": "首页",
+      "iconPath": "images/icons/home.png",
+      "selectedIconPath": "images/icons/home-active.png"
+    }, {
+      "pagePath": "pages/publish/publish",
+      "text": "发布",
+      "iconPath": "images/icons/business.png",
+      "selectedIconPath": "images/icons/business-active.png"
+    }, {
+      "pagePath": "pages/profile/profile",
+      "text": "我的",
+      "iconPath": "images/icons/usercenter.png",
+      "selectedIconPath": "images/icons/usercenter-active.png"
+    }]
+  },
+  "cloud": true
+}
