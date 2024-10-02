@@ -1,7 +1,0 @@
-<view class="container">
-  <block wx:for="{{projects}}" wx:key="id">
-    <navigator url="../project-detail/project-detail?id={{item.id}}">
-      <text>{{item.name}}</text>
-    </navigator>
-  </block>
-</view>

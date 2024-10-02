@@ -1,6 +1,0 @@
-<view class="container">
-  <text>个人中心</text>
-  <text>用户名称: {{userInfo.name}}</text>
-  <text>邮箱: {{userInfo.email}}</text>
-  <button bindtap="editProfile">编辑资料</button>
-</view>
