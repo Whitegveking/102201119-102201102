@@ -1,0 +1,47 @@
+/* pages/home/home.wxss */
+.container {
+  padding: 20px;
+}
+
+.project-item {
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-info {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.project-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.project-description {
+  font-size: 14px;
+  color: #555;
+}
+
+.project-creator {
+  font-size: 12px;
+  color: #888;
+}
+
+.join-btn {
+  background-color: #1aad19;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+}
+
+.joined-text {
+  color: #888;
+  font-size: 12px;
+}

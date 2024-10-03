@@ -1,13 +1,17 @@
+<!-- pages/index/index.wxml -->
 <view class="container">
-  <view class="search-bar">
-    <input placeholder="搜索项目" bindinput="onSearchInput" />
-    <button bindtap="onSearch">搜索</button>
-  </view>
+  <picker mode="selector" range="{{sortOptions}}" bindchange="handleSortChange">
+    <view class="picker">
+      当前排序: {{sortOption === 'latest' ? '最新发布' : '参与人数'}}
+    </view>
+  </picker>
+
   <view class="project-list">
     <block wx:for="{{projects}}" wx:key="_id">
-      <view class="project-item" bindtap="goToDetail" data-id="{{item._id}}">
+      <view class="project-item" data-id="{{item._id}}" bindtap="goToDetail">
         <text class="project-name">{{item.name}}</text>
-        <text class="project-status">{{item.status}}</text>
+        <text class="project-desc">{{item.description}}</text>
+        <text class="project-meta">参与人数: {{item.participantCount}} | 发布于: {{item.createdAt}}</text>
       </view>
     </block>
   </view>

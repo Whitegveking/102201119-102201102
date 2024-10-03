@@ -1,0 +1,22 @@
+<!-- pages/home/home.wxml -->
+<view class="container">
+  <block wx:for="{{projects}}" wx:key="_id">
+    <view class="project-item">
+      <view class="project-info" bindtap="goToDetail" data-id="{{item._id}}">
+        <text class="project-name">{{item.name}}</text>
+        <text class="project-description">{{item.description}}</text>
+        <text class="project-creator">创建者: {{item.creatorUsername}}</text>
+      </view>
+      
+      <!-- 加入按钮条件渲染 -->
+      <button wx:if="{{!item.members || !item.members.includes(openid)}}" bindtap="joinProject" data-id="{{item._id}}" class="join-btn">
+        加入
+      </button>
+      
+      <!-- 已加入提示 -->
+      <text wx:elif="{{item.members && item.members.includes(openid)}}" class="joined-text">
+        已加入
+      </text>
+    </view>
+  </block>
+</view>

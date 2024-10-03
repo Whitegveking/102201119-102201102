@@ -1,40 +1,91 @@
+/* pages/projectDetail/projectDetail.wxss */
 .container {
-    padding: 20px;
-  }
-  .project-info {
-    margin-bottom: 20px;
-  }
-  .project-name {
-    font-size: 20px;
-    font-weight: bold;
-  }
-  .project-description {
-    margin-top: 10px;
-    font-size: 16px;
-  }
-  .project-status, .project-skills {
-    margin-top: 5px;
-    font-size: 14px;
-    color: gray;
-  }
-  .member-list {
-    margin-top: 20px;
-  }
-  .section-title {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  .member-list text {
-    display: block;
-    margin-bottom: 5px;
-  }
-  button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #1AAD19;
-    color: white;
-    border: none;
-    border-radius: 5px;
-  }
-  
+  padding: 20px;
+}
+
+.project-info {
+  margin-bottom: 20px;
+}
+
+.project-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.project-description {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.project-creator {
+  font-size: 14px;
+  color: gray;
+  margin-top: 5px;
+}
+
+.join-btn {
+  background-color: #1aad19;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.creator-label,
+.member-label {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.chatroom {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.messages {
+  max-height: 300px;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.sender {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.content {
+  display: inline;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #999;
+  margin-left: 5px;
+}
+
+.input-area {
+  display: flex;
+  align-items: center;
+}
+
+.input-area input {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.send-btn {
+  background-color: #1aad19;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  margin-left: 10px;
+}

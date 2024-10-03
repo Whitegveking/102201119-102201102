@@ -1,16 +1,38 @@
+<!-- pages/projectDetail/projectDetail.wxml -->
 <view class="container">
+  <!-- 项目详情展示 -->
   <view class="project-info">
     <text class="project-name">{{project.name}}</text>
     <text class="project-description">{{project.description}}</text>
-    <text class="project-status">状态: {{project.status}}</text>
-    <text class="project-skills">所需技能: {{project.skills.join(', ')}}</text>
-    <button wx:if="{{!isMember && project.status === '招募中'}}" bindtap="joinProject">申请加入</button>
-    <button wx:if="{{isMember}}" bindtap="goToChat">进入聊天</button>
+    <text class="project-creator">创建者: {{creatorUsername}}</text>
+    <!-- 更多项目详情... -->
   </view>
-  <view class="member-list">
-    <text class="section-title">成员:</text>
-    <block wx:for="{{members}}" wx:key="_id">
-      <text>{{item.nickName}}</text>
-    </block>
+
+  <!-- 加入按钮 -->
+  <button wx:if="{{!isCreator && !isMember}}" bindtap="joinProject" class="join-btn">
+    加入项目
+  </button>
+  <text wx:elif="{{isCreator}}" class="creator-label">
+    您是项目创建者
+  </text>
+  <text wx:elif="{{isMember}}" class="member-label">
+    您已加入该项目
+  </text>
+
+  <!-- 聊天室展示 -->
+  <view class="chatroom">
+    <view class="messages">
+      <block wx:for="{{messages}}" wx:key="index">
+        <view class="message">
+          <text class="sender">{{item.senderUsername}}:</text>
+          <text class="content">{{item.content}}</text>
+          <text class="timestamp">{{formatTimestamp(item.timestamp)}}</text>
+        </view>
+      </block>
+    </view>
+    <view class="input-area">
+      <input placeholder="输入消息..." bindinput="handleMessageInput" value="{{newMessage}}" />
+      <button bindtap="sendMessage" class="send-btn">发送</button>
+    </view>
   </view>
 </view>

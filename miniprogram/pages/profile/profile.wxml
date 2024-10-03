@@ -1,23 +1,62 @@
+<!-- pages/profile/profile.wxml -->
 <view class="container">
+  <!-- 用户信息展示 -->
   <view class="user-info">
     <image src="{{user.avatarUrl}}" class="avatar"></image>
-    <text class="nickname">{{user.nickName}}</text>
+    <view>
+      <text class="nickname">{{user.nickName}}</text>
+      <text class="username">用户名: {{user.username}}</text>
+    </view>
   </view>
   
+  <!-- 设置用户名按钮（仅在新用户时显示） -->
+  <button wx:if="{{!user.username}}" bindtap="submitUsername" class="set-username-btn">设置用户名</button>
+  
+  <!-- 修改用户名按钮（仅在已设置用户名时显示） -->
+  <button wx:if="{{user.username}}" bindtap="openEditUsernameModal" class="edit-username-btn">修改用户名</button>
+
+  <!-- 设置用户名弹窗 -->
+  <view wx:if="{{showUsernameModal}}" class="modal-overlay">
+    <view class="modal">
+      <text class="modal-title">设置用户名</text>
+      <input placeholder="请输入用户名" bindinput="handleUsernameInput" value="{{usernameInput}}" />
+      <view class="modal-buttons">
+        <button bindtap="submitUsername" class="confirm-btn">确认</button>
+        <button bindtap="cancelUsername" class="cancel-btn">取消</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 修改用户名弹窗 -->
+  <view wx:if="{{showEditUsernameModal}}" class="modal-overlay">
+    <view class="modal">
+      <text class="modal-title">修改用户名</text>
+      <input placeholder="请输入新用户名" bindinput="handleEditUsernameInput" value="{{newUsername}}" />
+      <view class="modal-buttons">
+        <button bindtap="submitEditUsername" class="confirm-btn">确认</button>
+        <button bindtap="closeEditUsernameModal" class="cancel-btn">取消</button>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 用户发布的项目列表 -->
   <view class="project-section">
     <view class="section-title">我发布的项目</view>
     <block wx:for="{{createdProjects}}" wx:key="_id">
       <view class="project-item" data-id="{{item._id}}" bindtap="goToDetail">
-        <text>{{item.name}}</text>
+        <text class="project-name">{{item.name}}</text>
+        <text class="project-meta">参与人数: {{item.members.length}}</text>
       </view>
     </block>
   </view>
 
+  <!-- 用户参与的项目列表 -->
   <view class="project-section">
     <view class="section-title">我参与的项目</view>
     <block wx:for="{{joinedProjects}}" wx:key="_id">
       <view class="project-item" data-id="{{item._id}}" bindtap="goToDetail">
-        <text>{{item.name}}</text>
+        <text class="project-name">{{item.name}}</text>
+        <text class="project-meta">参与人数: {{item.members.length}}</text>
       </view>
     </block>
   </view>
