@@ -1,22 +1,24 @@
 <!-- pages/home/home.wxml -->
 <view class="container">
   <block wx:for="{{projects}}" wx:key="_id">
-    <view class="project-item">
-      <view class="project-info" bindtap="goToDetail" data-id="{{item._id}}">
+    <view class="project-item" bindtap="goToDetail" data-id="{{item._id}}">
+      <view class="project-info">
         <text class="project-name">{{item.name}}</text>
         <text class="project-description">{{item.description}}</text>
-        <text class="project-creator">创建者: {{item.creatorUsername}}</text>
+        <text class="member-count">参与人数: {{item.members.length}}</text>
       </view>
-      
-      <!-- 加入按钮条件渲染 -->
-      <button wx:if="{{!item.members || !item.members.includes(openid)}}" bindtap="joinProject" data-id="{{item._id}}" class="join-btn">
-        加入
-      </button>
-      
-      <!-- 已加入提示 -->
-      <text wx:elif="{{item.members && item.members.includes(openid)}}" class="joined-text">
-        已加入
-      </text>
+      <view class="project-actions">
+        <!-- 仅在首页显示加入项目按钮 -->
+        <button wx:if="{{!item.isCreator && !item.isMember}}" bindtap="joinProject" data-id="{{item._id}}" class="join-btn">
+          加入项目
+        </button>
+        <text wx:elif="{{item.isCreator}}" class="creator-label">
+          您是项目创建者
+        </text>
+        <text wx:elif="{{item.isMember}}" class="member-label">
+          您已加入该项目
+        </text>
+      </view>
     </view>
   </block>
 </view>

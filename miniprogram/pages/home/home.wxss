@@ -4,9 +4,9 @@
 }
 
 .project-item {
+  border: 1px solid #eee;
   padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 5px;
   margin-bottom: 15px;
   display: flex;
   justify-content: space-between;
@@ -15,33 +15,40 @@
 
 .project-info {
   flex: 1;
-  margin-right: 10px;
 }
 
 .project-name {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
 }
 
 .project-description {
-  font-size: 14px;
+  font-size: 16px;
   color: #555;
+  margin-top: 5px;
 }
 
-.project-creator {
-  font-size: 12px;
+.member-count {
+  font-size: 14px;
   color: #888;
+  margin-top: 5px;
+}
+
+.project-actions {
+  margin-left: 20px;
 }
 
 .join-btn {
   background-color: #1aad19;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.joined-text {
+.creator-label,
+.member-label {
+  font-size: 14px;
   color: #888;
-  font-size: 12px;
 }

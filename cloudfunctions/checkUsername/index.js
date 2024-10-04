@@ -1,8 +1,10 @@
 // cloudfunctions/checkUsername/index.js
+
 const cloud = require("wx-server-sdk");
 
+// 初始化云开发环境
 cloud.init({
-  env: "projectpartner-1g4uenov4ed43ae4", // 替换为您的云环境ID
+  env: "projectpartner-1g4uenov4ed43ae4", // 请替换为您的实际云环境ID
 });
 
 const db = cloud.database();
@@ -15,21 +17,20 @@ exports.main = async (event, context) => {
   }
 
   try {
-    // 查询是否有相同的用户名
+    // 检查用户名是否存在
     const res = await db
       .collection("Users")
       .where({
         username: username,
       })
-      .get();
+      .count();
 
-    if (res.data.length > 0) {
-      return { success: true, exists: true };
-    } else {
-      return { success: true, exists: false };
-    }
+    return {
+      success: true,
+      exists: res.total > 0,
+    };
   } catch (err) {
-    console.error("Error checking username:", err);
-    return { success: false, error: err.message };
+    console.error("Failed to check username:", err);
+    return { success: false, error: "服务器错误，请稍后再试" };
   }
 };

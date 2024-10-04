@@ -1,4 +1,4 @@
-// cloudfunctions/joinProject/index.js
+// cloudfunctions/exitProject/index.js
 
 const cloud = require("wx-server-sdk");
 
@@ -27,29 +27,34 @@ exports.main = async (event, context) => {
       return { success: false, error: "项目不存在" };
     }
 
-    // 检查用户是否已经加入项目
-    const isMember = project.members && project.members.includes(openid);
-    if (isMember) {
-      return { success: false, error: "您已加入该项目" };
+    // 检查用户是否为项目创建者
+    if (project.creator === openid) {
+      return { success: false, error: "项目创建者无法退出项目，请删除项目。" };
     }
 
-    // 更新项目的成员列表
+    // 检查用户是否已经加入项目
+    const isMember = project.members && project.members.includes(openid);
+    if (!isMember) {
+      return { success: false, error: "您尚未加入该项目" };
+    }
+
+    // 从 members 数组中移除用户的 openid
     const updateRes = await db
       .collection("Projects")
       .doc(projectId)
       .update({
         data: {
-          members: _.push([openid]),
+          members: _.pull(openid),
         },
       });
 
     if (updateRes.stats.updated === 0) {
-      return { success: false, error: "加入项目失败，请稍后再试" };
+      return { success: false, error: "退出项目失败，请稍后再试" };
     }
 
     return { success: true };
   } catch (err) {
-    console.error("Failed to join project:", err);
+    console.error("Failed to exit project:", err);
     return { success: false, error: "服务器错误，请稍后再试" };
   }
 };

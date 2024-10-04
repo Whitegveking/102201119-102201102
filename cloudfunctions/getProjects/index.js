@@ -1,4 +1,4 @@
-// cloudfunctions/getProjectDetail/index.js
+// cloudfunctions/getProjects/index.js
 
 const cloud = require("wx-server-sdk");
 

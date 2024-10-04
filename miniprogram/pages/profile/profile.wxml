@@ -2,62 +2,82 @@
 <view class="container">
   <!-- 用户信息展示 -->
   <view class="user-info">
-    <image src="{{user.avatarUrl}}" class="avatar"></image>
-    <view>
-      <text class="nickname">{{user.nickName}}</text>
-      <text class="username">用户名: {{user.username}}</text>
-    </view>
-  </view>
-  
-  <!-- 设置用户名按钮（仅在新用户时显示） -->
-  <button wx:if="{{!user.username}}" bindtap="submitUsername" class="set-username-btn">设置用户名</button>
-  
-  <!-- 修改用户名按钮（仅在已设置用户名时显示） -->
-  <button wx:if="{{user.username}}" bindtap="openEditUsernameModal" class="edit-username-btn">修改用户名</button>
-
-  <!-- 设置用户名弹窗 -->
-  <view wx:if="{{showUsernameModal}}" class="modal-overlay">
-    <view class="modal">
-      <text class="modal-title">设置用户名</text>
-      <input placeholder="请输入用户名" bindinput="handleUsernameInput" value="{{usernameInput}}" />
-      <view class="modal-buttons">
-        <button bindtap="submitUsername" class="confirm-btn">确认</button>
-        <button bindtap="cancelUsername" class="cancel-btn">取消</button>
+    <!-- 如果用户有头像，显示头像 -->
+    <block wx:if="{{user.avatarUrl}}">
+      <image class="avatar" src="{{user.avatarUrl}}" mode="aspectFill"></image>
+    </block>
+    <!-- 如果用户没有头像，显示首字母占位符 -->
+    <block wx:else>
+      <view class="avatar-placeholder">
+        <text class="avatar-initial">{{getInitial(user.nickName)}}</text>
       </view>
+    </block>
+    <view class="user-details">
+      <text class="nickName">{{user.nickName || '未设置昵称'}}</text>
+      <text class="username">用户名: {{user.username || '未设置'}}</text>
+      <button class="edit-btn" bindtap="openEditUsernameModal">编辑用户名</button>
     </view>
   </view>
 
-  <!-- 修改用户名弹窗 -->
-  <view wx:if="{{showEditUsernameModal}}" class="modal-overlay">
-    <view class="modal">
-      <text class="modal-title">修改用户名</text>
-      <input placeholder="请输入新用户名" bindinput="handleEditUsernameInput" value="{{newUsername}}" />
-      <view class="modal-buttons">
-        <button bindtap="submitEditUsername" class="confirm-btn">确认</button>
-        <button bindtap="closeEditUsernameModal" class="cancel-btn">取消</button>
-      </view>
-    </view>
-  </view>
-  
-  <!-- 用户发布的项目列表 -->
-  <view class="project-section">
-    <view class="section-title">我发布的项目</view>
-    <block wx:for="{{createdProjects}}" wx:key="_id">
-      <view class="project-item" data-id="{{item._id}}" bindtap="goToDetail">
-        <text class="project-name">{{item.name}}</text>
-        <text class="project-meta">参与人数: {{item.members.length}}</text>
-      </view>
+  <!-- 用户发布的项目 -->
+  <view class="section">
+    <text class="section-title">我发起的项目</text>
+    <block wx:if="{{createdProjects.length > 0}}">
+      <block wx:for="{{createdProjects}}" wx:key="_id">
+        <view class="project-item">
+          <view class="project-info" bindtap="goToDetail" data-id="{{item._id}}">
+            <text class="project-name">{{item.name}}</text>
+            <text class="project-description">{{item.description}}</text>
+            <text class="member-count">参与人数: {{item.members.length}}</text>
+          </view>
+          <view class="project-actions">
+            <button class="small-btn delete-btn" bindtap="deleteProject" data-id="{{item._id}}">删除</button>
+            <button class="small-btn exit-btn" bindtap="exitProject" data-id="{{item._id}}">退出</button>
+          </view>
+        </view>
+      </block>
+    </block>
+    <block wx:else>
+      <text class="no-projects">您尚未发起任何项目。</text>
     </block>
   </view>
 
-  <!-- 用户参与的项目列表 -->
-  <view class="project-section">
-    <view class="section-title">我参与的项目</view>
-    <block wx:for="{{joinedProjects}}" wx:key="_id">
-      <view class="project-item" data-id="{{item._id}}" bindtap="goToDetail">
-        <text class="project-name">{{item.name}}</text>
-        <text class="project-meta">参与人数: {{item.members.length}}</text>
-      </view>
+  <!-- 用户加入的项目 -->
+  <view class="section">
+    <text class="section-title">我参与的项目</text>
+    <block wx:if="{{joinedProjects.length > 0}}">
+      <block wx:for="{{joinedProjects}}" wx:key="_id">
+        <view class="project-item">
+          <view class="project-info" bindtap="goToDetail" data-id="{{item._id}}">
+            <text class="project-name">{{item.name}}</text>
+            <text class="project-description">{{item.description}}</text>
+            <text class="member-count">参与人数: {{item.members.length}}</text>
+          </view>
+          <view class="project-actions">
+            <button class="small-btn exit-btn" bindtap="exitProject" data-id="{{item._id}}">退出</button>
+          </view>
+        </view>
+      </block>
     </block>
+    <block wx:else>
+      <text class="no-projects">您尚未加入任何项目。</text>
+    </block>
+  </view>
+
+  <!-- 编辑用户名的模态框 -->
+  <view class="modal-overlay" wx:if="{{showEditUsernameModal}}">
+    <view class="modal-content">
+      <text class="modal-title">编辑用户名</text>
+      <input
+        class="modal-input"
+        placeholder="输入新的用户名"
+        value="{{newUsername}}"
+        bindinput="handleEditUsernameInput"
+      />
+      <view class="modal-buttons">
+        <button class="modal-btn cancel-btn" bindtap="closeEditUsernameModal">取消</button>
+        <button class="modal-btn confirm-btn" bindtap="submitEditUsername">确认</button>
+      </view>
+    </view>
   </view>
 </view>

@@ -1,7 +1,6 @@
 // pages/profile/profile.js
 
 const db = wx.cloud.database();
-const app = getApp();
 
 Page({
   data: {
@@ -32,6 +31,7 @@ Page({
     }
   },
 
+  // 获取用户信息和 openid
   fetchUserInfo: function () {
     // 获取 openid
     wx.cloud
@@ -56,8 +56,8 @@ Page({
       });
   },
 
+  // 获取用户在 Users 集合中的信息
   getUserInfo: function (openid) {
-    // 获取用户信息
     db.collection("Users")
       .where({
         _openid: openid,
@@ -81,6 +81,12 @@ Page({
       });
   },
 
+  // 获取昵称的首字母
+  getInitial: function (nickName) {
+    if (!nickName) return "";
+    return nickName.charAt(0).toUpperCase();
+  },
+
   // 处理设置用户名输入
   handleUsernameInput: function (e) {
     this.setData({
@@ -90,6 +96,7 @@ Page({
 
   // 打开修改用户名的弹窗
   openEditUsernameModal: function () {
+    console.log("openEditUsernameModal called"); // 添加日志
     this.setData({
       showEditUsernameModal: true,
       newUsername: this.data.user.username || "", // 预填充当前用户名
@@ -103,7 +110,7 @@ Page({
     });
   },
 
-  // 提交用户名（由按钮点击触发）
+  // 提交设置用户名（新用户）
   submitUsername: async function () {
     const username = this.data.usernameInput.trim();
     if (!username) {
@@ -131,7 +138,7 @@ Page({
     });
 
     try {
-      // 调用 getUserProfile 直接在用户交互事件中
+      // 获取用户的微信个人信息（仅限用户主动触发）
       const resProfile = await wx.getUserProfile({
         desc: "用于展示用户信息",
       });
@@ -161,6 +168,9 @@ Page({
               projects: [],
             },
           });
+
+          // 更新本地缓存中的用户名
+          wx.setStorageSync("username", username);
 
           this.setData({
             user: {
@@ -194,8 +204,9 @@ Page({
     }
   },
 
-  // 提交修改用户名（由按钮点击触发）
+  // 提交修改用户名（已存在用户）
   submitEditUsername: async function () {
+    console.log("submitEditUsername called with:", this.data.newUsername); // 添加日志
     const newUsername = this.data.newUsername.trim();
     if (!newUsername) {
       wx.showToast({
@@ -238,7 +249,10 @@ Page({
             icon: "none",
           });
         } else {
-          // 更新成功，刷新用户信息
+          // 更新本地缓存中的用户名
+          wx.setStorageSync("username", newUsername);
+
+          // 更新用户数据
           this.setData({
             "user.username": newUsername,
             showEditUsernameModal: false,
@@ -280,6 +294,7 @@ Page({
     });
   },
 
+  // 获取用户发布和加入的项目
   fetchProjects: function (openid) {
     console.log("Using openid to fetch projects:", openid); // 调试输出
 
@@ -316,10 +331,121 @@ Page({
       });
   },
 
+  // 跳转到项目详情页
   goToDetail: function (e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
       url: `/pages/projectDetail/projectDetail?id=${id}`,
+    });
+  },
+
+  // 退出项目
+  exitProject: function (e) {
+    const projectId = e.currentTarget.dataset.id;
+    if (!projectId) {
+      wx.showToast({
+        title: "项目ID缺失",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showModal({
+      title: "退出项目",
+      content: "您确定要退出这个项目吗？",
+      success: (res) => {
+        if (res.confirm) {
+          wx.showLoading({
+            title: "正在退出...",
+            mask: true,
+          });
+
+          wx.cloud
+            .callFunction({
+              name: "exitProject",
+              data: { projectId: projectId },
+            })
+            .then((res) => {
+              wx.hideLoading();
+              if (res.result.success) {
+                wx.showToast({
+                  title: "已退出项目",
+                  icon: "success",
+                });
+                // 重新获取项目列表
+                this.fetchProjects(this.data.openid);
+              } else {
+                wx.showToast({
+                  title: res.result.error || "退出项目失败",
+                  icon: "none",
+                });
+              }
+            })
+            .catch((err) => {
+              wx.hideLoading();
+              console.error("Failed to call exitProject:", err);
+              wx.showToast({
+                title: "退出项目失败",
+                icon: "none",
+              });
+            });
+        }
+      },
+    });
+  },
+
+  // 删除项目
+  deleteProject: function (e) {
+    const projectId = e.currentTarget.dataset.id;
+    if (!projectId) {
+      wx.showToast({
+        title: "项目ID缺失",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showModal({
+      title: "删除项目",
+      content: "您确定要删除这个项目吗？此操作不可撤销。",
+      success: (res) => {
+        if (res.confirm) {
+          wx.showLoading({
+            title: "正在删除...",
+            mask: true,
+          });
+
+          wx.cloud
+            .callFunction({
+              name: "deleteProject",
+              data: { projectId: projectId },
+            })
+            .then((res) => {
+              wx.hideLoading();
+              if (res.result.success) {
+                wx.showToast({
+                  title: "项目已删除",
+                  icon: "success",
+                });
+                // 重新获取项目列表
+                this.fetchProjects(this.data.openid);
+              } else {
+                wx.showToast({
+                  title: res.result.error || "删除项目失败",
+                  icon: "none",
+                });
+              }
+            })
+            .catch((err) => {
+              wx.hideLoading();
+              console.error("Failed to call deleteProject:", err);
+              wx.showToast({
+                title: "删除项目失败",
+                icon: "none",
+              });
+            });
+        }
+      },
     });
   },
 });
