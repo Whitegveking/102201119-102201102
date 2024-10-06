@@ -1,18 +1,45 @@
 <!-- pages/index/index.wxml -->
 <view class="container">
-  <picker mode="selector" range="{{sortOptions}}" bindchange="handleSortChange">
-    <view class="picker">
-      当前排序: {{sortOption === 'latest' ? '最新发布' : '参与人数'}}
+  <!-- 排序选项 -->
+  <picker mode="selector" range="{{sortOptions}}" bindchange="handleSortChange" class="picker">
+    <view class="picker-content">
+      当前排序：{{sortOptions[sortOption === 'latest' ? 0 : 1]}}
+      <icon type="arrow" size="20" color="#999"></icon>
     </view>
   </picker>
 
-  <view class="project-list">
-    <block wx:for="{{projects}}" wx:key="_id">
-      <view class="project-item" data-id="{{item._id}}" bindtap="goToDetail">
+  <!-- 项目列表 -->
+  <block wx:for="{{projects}}" wx:key="_id">
+    <view class="project-card" bindtap="goToDetail" data-id="{{item._id}}">
+      <view class="project-info">
         <text class="project-name">{{item.name}}</text>
-        <text class="project-desc">{{item.description}}</text>
-        <text class="project-meta">参与人数: {{item.participantCount}} | 发布于: {{item.createdAt}}</text>
+        <text class="project-description">{{item.description}}</text>
+        <view class="project-details">
+          <text class="member-count">参与人数: {{item.participantCount}}</text>
+          <text class="publish-time">发布于{{item.createdAtFormatted}}</text>
+        </view>
+        <view class="project-status">
+          <icon type="{{getStatusIcon(item.status)}}" size="16" color="{{getStatusColor(item.status)}}"></icon>
+          <text class="status-text">{{item.status}}</text>
+        </view>
       </view>
-    </block>
+      <view class="project-actions">
+        <!-- 仅在首页显示加入项目按钮 -->
+        <button wx:if="{{!item.isCreator && !item.isMember}}" bindtap="joinProject" data-id="{{item._id}}" class="join-btn">
+          加入项目
+        </button>
+        <text wx:elif="{{item.isCreator}}" class="creator-label">
+          您是项目创建者
+        </text>
+        <text wx:elif="{{item.isMember}}" class="member-label">
+          您已加入该项目
+        </text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 无项目提示 -->
+  <view wx:if="{{projects.length === 0}}" class="no-projects">
+    <text>暂无项目，请创建或加入项目。</text>
   </view>
 </view>

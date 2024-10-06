@@ -1,54 +1,98 @@
 /* pages/home/home.wxss */
+
 .container {
   padding: 20px;
+  background-color: #f9f9f9;
 }
 
-.project-item {
-  border: 1px solid #eee;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 15px;
+.project-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.project-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.project-info {
-  flex: 1;
+  margin-bottom: 12px;
 }
 
 .project-name {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.publish-time {
+  font-size: 14px;
+  color: #888888;
+}
+
+.project-body {
+  margin-bottom: 12px;
 }
 
 .project-description {
   font-size: 16px;
-  color: #555;
-  margin-top: 5px;
+  color: #555555;
+  margin-bottom: 8px;
 }
 
 .member-count {
   font-size: 14px;
-  color: #888;
-  margin-top: 5px;
+  color: #888888;
 }
 
-.project-actions {
-  margin-left: 20px;
+.project-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .join-btn {
   background-color: #1aad19;
-  color: white;
+  color: #ffffff;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 16px;
   border-radius: 4px;
   font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.join-btn:hover {
+  background-color: #179c16;
 }
 
 .creator-label,
 .member-label {
   font-size: 14px;
-  color: #888;
+  color: #888888;
+}
+
+@media (min-width: 750px) {
+  .container {
+    padding: 40px;
+  }
+
+  .project-card {
+    padding: 24px;
+  }
+
+  .project-name {
+    font-size: 20px;
+  }
+
+  .project-description {
+    font-size: 18px;
+  }
 }

@@ -1,38 +1,41 @@
 <!-- pages/projectDetail/projectDetail.wxml -->
 <view class="container">
   <!-- 项目详情展示 -->
-  <view class="project-info">
+  <view class="project-details">
     <text class="project-name">{{project.name}}</text>
     <text class="project-description">{{project.description}}</text>
-    <text class="project-creator">创建者: {{creatorUsername}}</text>
-    <!-- 更多项目详情... -->
+    <text class="creator-info">创建者: {{creatorUsername}}</text>
+    <text class="member-count">参与人数: {{project.members.length}}</text>
   </view>
 
-  <!-- 加入按钮 -->
-  <button wx:if="{{!isCreator && !isMember}}" bindtap="joinProject" class="join-btn">
-    加入项目
-  </button>
-  <text wx:elif="{{isCreator}}" class="creator-label">
-    您是项目创建者
-  </text>
-  <text wx:elif="{{isMember}}" class="member-label">
-    您已加入该项目
-  </text>
+  <!-- 加入项目按钮（仅未加入且非创建者） -->
+  <button wx:if="{{!isCreator && !isMember}}" class="join-btn" bindtap="joinProject">加入项目</button>
 
-  <!-- 聊天室展示 -->
-  <view class="chatroom">
-    <view class="messages">
-      <block wx:for="{{messages}}" wx:key="index">
-        <view class="message">
-          <text class="sender">{{item.senderUsername}}:</text>
-          <text class="content">{{item.content}}</text>
-          <text class="timestamp">{{formatTimestamp(item.timestamp)}}</text>
-        </view>
-      </block>
-    </view>
-    <view class="input-area">
-      <input placeholder="输入消息..." bindinput="handleMessageInput" value="{{newMessage}}" />
-      <button bindtap="sendMessage" class="send-btn">发送</button>
-    </view>
+  <!-- 退出项目和删除项目按钮（仅已加入） -->
+  <view class="project-actions" wx:if="{{isMember || isCreator}}">
+    <button wx:if="{{isMember}}" class="small-btn exit-btn" bindtap="exitProject" data-id="{{projectId}}">退出项目</button>
+    <button wx:if="{{isCreator}}" class="small-btn delete-btn" bindtap="deleteProject" data-id="{{projectId}}">删除项目</button>
+  </view>
+
+  <!-- 聊天室消息展示 -->
+  <scroll-view class="chat-container" scroll-y="true">
+    <block wx:for="{{messages}}" wx:key="index">
+      <view class="message-item">
+        <text class="message-sender">{{item.senderUsername}}:</text>
+        <text class="message-content">{{item.content}}</text>
+        <text class="message-timestamp">{{formatTimestamp(item.timestamp)}}</text>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 发送消息输入框 -->
+  <view class="message-input-container">
+    <input
+      class="message-input"
+      placeholder="输入消息..."
+      value="{{newMessage}}"
+      bindinput="handleMessageInput"
+    />
+    <button class="send-btn" bindtap="sendMessage">发送</button>
   </view>
 </view>

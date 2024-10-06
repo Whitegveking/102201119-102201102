@@ -1,4 +1,5 @@
 // pages/home/home.js
+
 Page({
   data: {
     projects: [],
@@ -17,7 +18,9 @@ Page({
   fetchOpenId: function () {
     const openid = wx.getStorageSync("openid");
     if (openid) {
-      this.setData({ openid });
+      this.setData({ openid }, () => {
+        this.fetchProjects();
+      });
     } else {
       wx.cloud
         .callFunction({
@@ -28,8 +31,9 @@ Page({
           const openid = res.result.openid;
           if (openid) {
             wx.setStorageSync("openid", openid);
-            this.setData({ openid });
-            this.fetchProjects();
+            this.setData({ openid }, () => {
+              this.fetchProjects();
+            });
           }
         })
         .catch((err) => {
@@ -52,10 +56,32 @@ Page({
           const isCreator = project.creator === this.data.openid;
           const isMember =
             project.members && project.members.includes(this.data.openid);
+
+          // 日志输出，帮助调试
+          console.log(`Project ID: ${project._id}`);
+          console.log(`Type of createdAt: ${typeof project.createdAt}`);
+          console.log(`CreatedAt content:`, project.createdAt);
+
+          // 提取并格式化 createdAt
+          const createdAtFormatted = this.formatCreatedAt(project.createdAt);
+
+          console.log(`Formatted createdAt: ${createdAtFormatted}`);
+          console.log(
+            `Type of createdAtFormatted: ${typeof createdAtFormatted}`
+          );
+
+          // 构建新的项目对象
           return {
-            ...project,
-            isCreator,
-            isMember,
+            _id: project._id,
+            name: project.name,
+            description: project.description,
+            creator: project.creator,
+            members: project.members,
+            isCreator: isCreator,
+            isMember: isMember,
+            createdAtFormatted: createdAtFormatted, // 添加格式化后的时间
+            participantCount: project.participantCount || 0, // 确保有参与人数
+            // 其他需要的字段...
           };
         });
         this.setData({ projects });
@@ -67,6 +93,25 @@ Page({
           icon: "none",
         });
       });
+  },
+
+  // 提取并格式化 createdAt 字段
+  formatCreatedAt: function (createdAt) {
+    if (!createdAt) return "未知时间";
+
+    // 直接解析字符串日期
+    const date = new Date(createdAt);
+    if (isNaN(date.getTime())) return "未知时间";
+
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return date.toLocaleString("zh-CN", options);
   },
 
   // 处理“加入项目”按钮点击

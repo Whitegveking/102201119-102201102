@@ -1,4 +1,5 @@
 // pages/projectDetail/projectDetail.js
+
 Page({
   data: {
     project: {},
@@ -9,6 +10,8 @@ Page({
     messages: [],
     newMessage: "",
     projectId: "",
+    messageWatcher: null,
+    openid: "", // 添加 openid
   },
 
   onLoad: function (options) {
@@ -16,14 +19,57 @@ Page({
     this.setData({ projectId });
 
     if (projectId) {
-      this.fetchProjectDetail(projectId);
-      this.fetchChatroom(projectId);
+      this.fetchOpenId().then(() => {
+        this.fetchProjectDetail(projectId);
+        this.fetchChatroom(projectId);
+      });
     } else {
       wx.showToast({
         title: "项目ID缺失",
         icon: "none",
       });
     }
+  },
+
+  onUnload: function () {
+    // 取消监听
+    if (this.data.messageWatcher) {
+      this.data.messageWatcher.close();
+    }
+  },
+
+  // 获取当前用户的 openid
+  fetchOpenId: function () {
+    return new Promise((resolve, reject) => {
+      const openid = wx.getStorageSync("openid");
+      if (openid) {
+        this.setData({ openid });
+        resolve(openid);
+      } else {
+        wx.cloud
+          .callFunction({
+            name: "getOpenId",
+            data: {},
+          })
+          .then((res) => {
+            const openid = res.result.openid;
+            if (openid) {
+              wx.setStorageSync("openid", openid);
+              this.setData({ openid });
+              resolve(openid);
+            } else {
+              console.error(
+                "Failed to fetch openid from cloud function result"
+              );
+              reject("Failed to fetch openid");
+            }
+          })
+          .catch((err) => {
+            console.error("Failed to get OpenID:", err);
+            reject(err);
+          });
+      }
+    });
   },
 
   // 格式化时间戳为可读格式
@@ -44,8 +90,10 @@ Page({
           const project = res.result.project;
           const creatorUsername = res.result.creatorUsername;
 
+          // 获取当前用户的 openid
+          const openid = this.data.openid;
+
           // 判断当前用户是否为创建者或已加入项目
-          const openid = wx.getStorageSync("openid");
           const isCreator = project.creator === openid;
           const isMember = project.members && project.members.includes(openid);
 
@@ -63,7 +111,7 @@ Page({
         }
       })
       .catch((err) => {
-        console.error("Failed to call getProjectDetail:", err);
+        console.error("Failed to call getProjects:", err);
         wx.showToast({
           title: "获取项目详情失败",
           icon: "none",
@@ -71,9 +119,11 @@ Page({
       });
   },
 
-  // 获取聊天室数据
+  // 获取聊天室数据并设置实时监听
   fetchChatroom: function (projectId) {
     const db = wx.cloud.database();
+    const _ = db.command;
+
     db.collection("Chatrooms")
       .where({
         projectId: projectId,
@@ -81,10 +131,34 @@ Page({
       .get()
       .then((res) => {
         if (res.data.length > 0) {
+          const chatroom = res.data[0];
           this.setData({
-            chatroom: res.data[0],
-            messages: res.data[0].messages || [],
+            chatroom: chatroom,
+            messages: chatroom.messages || [],
           });
+
+          // 设置实时监听
+          const watcher = db
+            .collection("Chatrooms")
+            .where({
+              projectId: projectId,
+            })
+            .watch({
+              onChange: (snapshot) => {
+                if (snapshot.docs.length > 0) {
+                  const updatedChatroom = snapshot.docs[0];
+                  this.setData({
+                    chatroom: updatedChatroom,
+                    messages: updatedChatroom.messages || [],
+                  });
+                }
+              },
+              onError: (err) => {
+                console.error("实时监听失败:", err);
+              },
+            });
+
+          this.setData({ messageWatcher: watcher });
         } else {
           // 如果没有聊天室，创建一个新的聊天室
           db.collection("Chatrooms")
@@ -127,7 +201,7 @@ Page({
 
   // 发送新消息
   sendMessage: function () {
-    const { newMessage, chatroom, projectId } = this.data;
+    const { newMessage, projectId } = this.data;
     if (!newMessage.trim()) {
       wx.showToast({
         title: "消息不能为空",
@@ -138,8 +212,18 @@ Page({
 
     const db = wx.cloud.database();
     const _ = db.command;
-    const openid = wx.getStorageSync("openid"); // 确保已存储 openid
+    const openid = this.data.openid; // 已获取的 openid
     const username = wx.getStorageSync("username"); // 确保已存储 username
+
+    console.log("发送消息的用户名:", username); // 添加日志
+
+    if (!username) {
+      wx.showToast({
+        title: "用户名未设置",
+        icon: "none",
+      });
+      return;
+    }
 
     const message = {
       senderOpenid: openid,
@@ -160,7 +244,6 @@ Page({
       .then((res) => {
         this.setData({
           newMessage: "",
-          messages: [...this.data.messages, message],
         });
         wx.showToast({
           title: "发送成功",
@@ -176,9 +259,119 @@ Page({
       });
   },
 
-  // 处理“加入项目”按钮点击
-  joinProject: function () {
-    const projectId = this.data.projectId;
+  // 退出项目
+  exitProject: function (e) {
+    const projectId = e.currentTarget.dataset.id;
+    if (!projectId) {
+      wx.showToast({
+        title: "项目ID缺失",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showModal({
+      title: "退出项目",
+      content: "您确定要退出这个项目吗？",
+      success: (res) => {
+        if (res.confirm) {
+          wx.showLoading({
+            title: "正在退出...",
+            mask: true,
+          });
+
+          wx.cloud
+            .callFunction({
+              name: "exitProject",
+              data: { projectId: projectId },
+            })
+            .then((res) => {
+              wx.hideLoading();
+              if (res.result.success) {
+                wx.showToast({
+                  title: "已退出项目",
+                  icon: "success",
+                });
+                // 重新获取项目详情以更新参与人数和按钮状态
+                this.fetchProjectDetail(projectId);
+              } else {
+                wx.showToast({
+                  title: res.result.error || "退出项目失败",
+                  icon: "none",
+                });
+              }
+            })
+            .catch((err) => {
+              wx.hideLoading();
+              console.error("Failed to call exitProject:", err);
+              wx.showToast({
+                title: "退出项目失败",
+                icon: "none",
+              });
+            });
+        }
+      },
+    });
+  },
+
+  // 删除项目
+  deleteProject: function (e) {
+    const projectId = e.currentTarget.dataset.id;
+    if (!projectId) {
+      wx.showToast({
+        title: "项目ID缺失",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showModal({
+      title: "删除项目",
+      content: "您确定要删除这个项目吗？此操作不可撤销。",
+      success: (res) => {
+        if (res.confirm) {
+          wx.showLoading({
+            title: "正在删除...",
+            mask: true,
+          });
+
+          wx.cloud
+            .callFunction({
+              name: "deleteProject",
+              data: { projectId: projectId },
+            })
+            .then((res) => {
+              wx.hideLoading();
+              if (res.result.success) {
+                wx.showToast({
+                  title: "项目已删除",
+                  icon: "success",
+                });
+                // 关闭当前页面并返回上一页
+                wx.navigateBack();
+              } else {
+                wx.showToast({
+                  title: res.result.error || "删除项目失败",
+                  icon: "none",
+                });
+              }
+            })
+            .catch((err) => {
+              wx.hideLoading();
+              console.error("Failed to call deleteProject:", err);
+              wx.showToast({
+                title: "删除项目失败",
+                icon: "none",
+              });
+            });
+        }
+      },
+    });
+  },
+
+  // 添加 joinProject 方法
+  joinProject: function (e) {
+    const projectId = e.currentTarget.dataset.id;
     if (!projectId) {
       wx.showToast({
         title: "项目ID缺失",
@@ -204,14 +397,8 @@ Page({
             title: "加入成功",
             icon: "success",
           });
-          // 更新本地数据
-          this.setData({
-            isMember: true,
-            "project.members": [
-              ...(this.data.project.members || []),
-              wx.getStorageSync("openid"),
-            ],
-          });
+          // 重新获取项目详情以更新参与人数和按钮状态
+          this.fetchProjectDetail(projectId);
         } else {
           wx.showToast({
             title: res.result.error || "加入失败",

@@ -1,135 +1,302 @@
 /* pages/profile/profile.wxss */
+
 .container {
   padding: 20px;
+  background-color: #c7e7f7; /* 设置背景色为 #C7E7F7 */
+  min-height: 100vh;
 }
 
+/* 用户信息部分 */
 .user-info {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .avatar {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
-.nickname {
-  font-size: 18px;
+.user-details {
+  flex: 1;
+}
+
+.nick-name {
+  font-size: 22px;
   font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 8px;
+  display: block;
 }
 
 .username {
   font-size: 16px;
-  color: #555;
+  color: #555555;
+  margin-bottom: 12px;
+  display: block;
 }
 
-.set-username-btn,
 .edit-username-btn {
   background-color: #1aad19;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.project-section {
-  margin-top: 20px;
+.edit-username-btn:hover {
+  background-color: #179b16;
+}
+
+/* 项目列表部分 */
+.projects-section {
+  margin-bottom: 30px;
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
-  margin-bottom: 10px;
+  color: #333333;
+  margin-bottom: 15px;
 }
 
-.project-item {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 10px;
+/* 项目卡片样式（与主页一致） */
+.project-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  transition: box-shadow 0.3s;
+}
+
+.project-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.project-info {
+  flex: 1;
+  margin-right: 20px;
 }
 
 .project-name {
-  font-size: 14px;
+  font-size: 20px;
   font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 8px;
+  display: block;
 }
 
-.project-meta {
-  font-size: 12px;
-  color: #888;
+.project-description {
+  font-size: 16px;
+  color: #555555;
+  margin-bottom: 12px;
+  display: block;
 }
 
-.join-btn {
-  background-color: #1aad19;
+.project-details {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: #777777;
+}
+
+.member-count,
+.publish-time {
+  display: flex;
+  align-items: center;
+}
+
+.member-count::before,
+.publish-time::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #777777;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* 项目状态标签 */
+.project-status {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.status-text {
+  margin-left: 6px;
+}
+
+/* 项目操作按钮样式 */
+.project-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.delete-btn,
+.exit-btn {
+  background-color: #ff4d4f;
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 8px;
 }
 
-.joined-text {
-  color: #888;
-  font-size: 12px;
+.delete-btn:hover,
+.exit-btn:hover {
+  background-color: #d9363e;
 }
 
+.no-projects {
+  text-align: center;
+  font-size: 16px;
+  color: #999999;
+  padding: 40px 0;
+}
+
+/* 弹窗样式 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* 确保弹窗在最上层 */
 }
 
 .modal {
-  background-color: #fff;
+  background-color: #ffffff;
+  border-radius: 10px;
   padding: 20px;
-  border-radius: 8px;
   width: 80%;
+  max-width: 400px;
 }
 
 .modal-title {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;
+  color: #333333;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-.modal input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.username-input {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 16px;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background-color: #f0f0f0;
+  color: #333333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancel-btn:hover {
+  background-color: #d9d9d9;
 }
 
 .confirm-btn {
   background-color: #1aad19;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  margin-right: 10px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.cancel-btn {
-  background-color: #f4f4f4;
-  color: #333;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+.confirm-btn:hover {
+  background-color: #179b16;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .user-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .avatar {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .edit-username-btn {
+    width: 100%;
+  }
+
+  .project-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .project-info {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .project-details {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .project-actions {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .delete-btn,
+  .exit-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .modal {
+    width: 90%;
+    padding: 15px;
+  }
 }

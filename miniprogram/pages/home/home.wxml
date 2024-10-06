@@ -1,13 +1,16 @@
 <!-- pages/home/home.wxml -->
 <view class="container">
   <block wx:for="{{projects}}" wx:key="_id">
-    <view class="project-item" bindtap="goToDetail" data-id="{{item._id}}">
-      <view class="project-info">
+    <view class="project-card" bindtap="goToDetail" data-id="{{item._id}}">
+      <view class="project-header">
         <text class="project-name">{{item.name}}</text>
-        <text class="project-description">{{item.description}}</text>
-        <text class="member-count">参与人数: {{item.members.length}}</text>
+        <text class="publish-time">发布于{{item.createdAtFormatted}}</text>
       </view>
-      <view class="project-actions">
+      <view class="project-body">
+        <text class="project-description">{{item.description}}</text>
+        <text class="member-count">参与人数: {{item.participantCount}}</text>
+      </view>
+      <view class="project-footer">
         <!-- 仅在首页显示加入项目按钮 -->
         <button wx:if="{{!item.isCreator && !item.isMember}}" bindtap="joinProject" data-id="{{item._id}}" class="join-btn">
           加入项目
