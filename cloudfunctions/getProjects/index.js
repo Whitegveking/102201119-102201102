@@ -32,7 +32,7 @@ exports.main = async (event, context) => {
         _openid: project.creator,
       })
       .get();
-
+    
     const creatorUsername =
       creatorRes.data.length > 0 ? creatorRes.data[0].username : "未知用户";
 

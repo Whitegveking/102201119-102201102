@@ -4,29 +4,35 @@
     height: 100vh;
     padding: 10px;
   }
+  /* 消息列表 */
   .message-list {
     flex: 1;
     overflow-y: scroll;
     margin-bottom: 10px;
   }
+  /* 消息项 */
   .message-item {
     margin-bottom: 5px;
   }
+  /* 消息内容 */
   .sender {
     font-weight: bold;
   }
+  /* 消息内容 */
   .content {
     margin-left: 5px;
   }
   form {
     display: flex;
   }
+  /* 输入框 */
   form input {
     flex: 1;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
+  /* 发送按钮 */
   form button {
     margin-left: 10px;
     padding: 5px 10px;

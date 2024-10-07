@@ -13,6 +13,7 @@ Component({
   properties: {
     showUploadTipProps: Boolean
   },
+  // 监听属性
   observers: {
     showUploadTipProps: function(showUploadTipProps) {
       this.setData({
@@ -20,6 +21,7 @@ Component({
       });
     }
   },
+  // 组件生命周期
   methods: {
     onCheckEnv(){
       wx.showLoading({
@@ -50,7 +52,7 @@ Component({
           }
         });
     },
-
+    // 取消
     onCheckEnvCancel(){
       this.setData({
         showUploadTip: !this.data.showUploadTip

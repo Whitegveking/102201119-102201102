@@ -9,9 +9,9 @@ const db = cloud.database();
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const { projectId, newStatus } = event;
-  const wxContext = cloud.getWXContext();
-  const openid = wxContext.OPENID;
+  const { projectId, newStatus } = event;//获取项目ID和新状态
+  const wxContext = cloud.getWXContext();//获取微信上下文
+  const openid = wxContext.OPENID;//获取用户的openid
 
   // 可选的项目状态列表
   const validStatuses = ["进行中", "已完成", "已取消"];
@@ -23,8 +23,8 @@ exports.main = async (event, context) => {
 
   try {
     // 查找项目
-    const projectRes = await db.collection("Projects").doc(projectId).get();
-    const project = projectRes.data;
+    const projectRes = await db.collection("Projects").doc(projectId).get();//获取项目
+    const project = projectRes.data;//获取项目数据
 
     if (!project) {
       return { success: false, error: "项目不存在" };

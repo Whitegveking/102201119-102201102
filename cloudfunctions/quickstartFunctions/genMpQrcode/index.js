@@ -1,6 +1,6 @@
 const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
-
+// 云函数入口函数
 exports.main = async (event, context) => {
   const pagePath = event.pagePath;
   // 获取小程序二维码的buffer

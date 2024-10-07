@@ -7,7 +7,7 @@
   background-color: rgba(0,0,0,0.4);
   z-index: 1;
 }
-
+/* 安装提示 */
 .install_tip_detail {
   position: fixed;
   background-color: white;
@@ -19,23 +19,25 @@
   padding: 50rpx;
   z-index: 9;
 }
-
+/* 安装提示标题 */
 .install_tip_detail_title {
   font-weight: 400;
   font-size: 40rpx;
   text-align: center;
 }
-
+/* 安装提示内容 */
 .install_tip_detail_tip {
   font-size: 25rpx;
   color: rgba(0,0,0,0.4);
   margin-top: 20rpx;
   text-align: left;
 }
+/* 安装提示按钮 */
 .install_tip_detail_buttons {
   padding-top: 50rpx;
   display: flex;
 }
+
 .install_tip_detail_button {
   color: #07C160;
   font-weight: 500;

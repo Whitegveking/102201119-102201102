@@ -4,14 +4,14 @@ const cloud = require("wx-server-sdk");
 cloud.init({
   env: "projectpartner-1g4uenov4ed43ae4", // 替换为你的云环境ID
 });
-
+// 初始化云开发环境
 const db = cloud.database();
 const _ = db.command;
-
+// 云函数入口函数
 exports.main = async (event, context) => {
   const { projectId, name, description, skills, status } = event;
   const openid = cloud.getWXContext().OPENID;
-
+  // 项目状态列表
   if (!projectId) {
     return {
       success: false,
