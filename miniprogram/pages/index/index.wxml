@@ -1,5 +1,29 @@
 <!-- pages/index/index.wxml -->
 <view class="container">
+  <!-- 搜索和刷新部分 -->
+  <view class="search-refresh-container">
+    <!-- 搜索区域 -->
+    <view class="search-row">
+      <input
+        class="search-input"
+        placeholder="搜索项目名称或发起人"
+        bindinput="handleSearchInput"
+        value="{{searchQuery}}"
+      ></input>
+      <button bindtap="handleSearch" class="search-btn">
+        <icon type="search" size="20" color="#333"></icon>
+        <text class="search-text">搜索</text>
+      </button>
+    </view>
+    <!-- 刷新按钮 -->
+    <view class="refresh-row">
+      <button bindtap="handleRefresh" class="refresh-btn">
+        <icon type="refresh" size="20" color="#333"></icon>
+        <text class="refresh-text">刷新</text>
+      </button>
+    </view>
+  </view>
+
   <!-- 排序选项 -->
   <picker mode="selector" range="{{sortOptions}}" bindchange="handleSortChange" class="picker">
     <view class="picker-content">

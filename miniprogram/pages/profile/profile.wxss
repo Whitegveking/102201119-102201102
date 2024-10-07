@@ -1,8 +1,9 @@
 /* pages/profile/profile.wxss */
 
+/* 容器样式 */
 .container {
   padding: 20px;
-  background-color: #c7e7f7; /* 设置背景色为 #C7E7F7 */
+  background-color: #c7e7f7; /* 与首页一致的背景色 */
   min-height: 100vh;
 }
 
@@ -23,6 +24,7 @@
   height: 80px;
   border-radius: 50%;
   margin-right: 20px;
+  background-color: #ddd; /* 默认头像背景色 */
 }
 
 .user-details {
@@ -44,6 +46,7 @@
   display: block;
 }
 
+/* 编辑用户名按钮 */
 .edit-username-btn {
   background-color: #1aad19;
   color: white;
@@ -62,6 +65,19 @@
 /* 项目列表部分 */
 .projects-section {
   margin-bottom: 30px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 项目列表标题与切换按钮 */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
 .section-title {
@@ -69,6 +85,15 @@
   font-weight: bold;
   color: #333333;
   margin-bottom: 15px;
+}
+
+.toggle-icon {
+  transition: transform 0.3s, color 0.3s;
+  color: #333333; /* 设置箭头颜色为深灰色，确保对比度 */
+}
+
+.toggle-icon.rotate {
+  transform: rotate(180deg); /* 旋转180度，指向上 */
 }
 
 /* 项目卡片样式（与主页一致） */
@@ -170,11 +195,106 @@
   background-color: #d9363e;
 }
 
+/* 无项目提示样式 */
 .no-projects {
   text-align: center;
   font-size: 16px;
   color: #999999;
-  padding: 40px 0;
+  padding: 20px 0;
+}
+
+/* 聊天室消息展示部分 */
+.chat-section {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 15px;
+}
+
+.chat-container {
+  height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: scroll;
+  background-color: #f9f9f9;
+  margin-bottom: 15px;
+}
+
+.message-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #e6f7ff;
+}
+
+.own-message {
+  background-color: #d9f7be;
+  align-self: flex-end;
+}
+
+.other-message {
+  background-color: #e6f7ff;
+  align-self: flex-start;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.message-sender {
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.message-timestamp {
+  font-size: 12px;
+  color: #999999;
+}
+
+.message-content {
+  font-size: 14px;
+  color: #333333;
+}
+
+/* 发送消息输入框 */
+.message-input-container {
+  display: flex;
+  gap: 10px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #ffffff;
+}
+
+.send-btn {
+  padding: 10px 16px;
+  background-color: #1aad19;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.send-btn:hover {
+  background-color: #179b16;
 }
 
 /* 弹窗样式 */
@@ -254,6 +374,10 @@
 
 /* 响应式设计 */
 @media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+
   .user-info {
     flex-direction: column;
     align-items: center;
@@ -265,8 +389,38 @@
     margin-bottom: 15px;
   }
 
+  .user-details {
+    width: 100%;
+  }
+
+  .nick-name {
+    font-size: 20px;
+  }
+
+  .username {
+    font-size: 14px;
+  }
+
   .edit-username-btn {
     width: 100%;
+  }
+
+  /* 项目列表部分 */
+  .projects-section {
+    padding: 15px 10px;
+  }
+
+  .section-header {
+    justify-content: space-between;
+  }
+
+  .toggle-icon {
+    transition: transform 0.3s, color 0.3s;
+    color: #333333; /* 设置箭头颜色为深灰色，确保对比度 */
+  }
+
+  .toggle-icon.rotate {
+    transform: rotate(180deg); /* 旋转180度，指向上 */
   }
 
   .project-card {
@@ -295,6 +449,16 @@
     text-align: center;
   }
 
+  /* 聊天室部分 */
+  .chat-container {
+    height: 200px;
+  }
+
+  .message-content {
+    font-size: 13px;
+  }
+
+  /* 弹窗样式 */
   .modal {
     width: 90%;
     padding: 15px;

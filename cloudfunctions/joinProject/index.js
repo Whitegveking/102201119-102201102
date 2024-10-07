@@ -33,13 +33,14 @@ exports.main = async (event, context) => {
       return { success: false, error: "您已加入该项目" };
     }
 
-    // 更新项目的成员列表
+    // 更新项目的成员列表和参与人数
     const updateRes = await db
       .collection("Projects")
       .doc(projectId)
       .update({
         data: {
           members: _.push([openid]),
+          participantCount: _.inc(1), // 增加参与人数
         },
       });
 

@@ -6,6 +6,80 @@
   min-height: 100vh;
 }
 
+/* 搜索和刷新容器 */
+.search-refresh-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* 搜索行 */
+.search-row {
+  display: flex;
+  align-items: center;
+}
+
+/* 搜索输入框 */
+.search-input {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 8px 0 0 8px;
+  padding: 8px 12px;
+  font-size: 16px;
+}
+
+/* 搜索按钮 */
+.search-btn {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.search-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.search-text {
+  margin-left: 4px;
+  font-size: 14px;
+  color: #333333;
+}
+
+/* 刷新行 */
+.refresh-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 刷新按钮 */
+.refresh-btn {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.refresh-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.refresh-text {
+  margin-left: 4px;
+  font-size: 14px;
+  color: #333333;
+}
+
 /* 排序选项样式 */
 .picker {
   margin-bottom: 20px;
@@ -170,5 +244,41 @@
 
   .project-status {
     margin-top: 8px;
+  }
+
+  .search-refresh-container {
+    gap: 15px;
+  }
+
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input {
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  .search-btn {
+    border-radius: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .refresh-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .refresh-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-text,
+  .refresh-text {
+    display: inline; /* 确保文字显示 */
   }
 }

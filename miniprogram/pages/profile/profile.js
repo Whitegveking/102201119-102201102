@@ -12,6 +12,8 @@ Page({
     showEditUsernameModal: false, // 控制修改用户名的弹窗
     usernameInput: "", // 用户输入的用户名（设置）
     newUsername: "", // 用户输入的新用户名（修改）
+    showCreatedProjects: true, // 控制“您创建的项目”部分的显示
+    showJoinedProjects: true, // 控制“您加入的项目”部分的显示
   },
 
   onLoad: function () {
@@ -31,7 +33,9 @@ Page({
     }
   },
 
-  // 获取用户信息和 openid
+  /**
+   * 获取用户信息和 openid
+   */
   fetchUserInfo: function () {
     // 获取 openid
     wx.cloud
@@ -56,7 +60,9 @@ Page({
       });
   },
 
-  // 获取用户在 Users 集合中的信息
+  /**
+   * 获取用户在 Users 集合中的信息
+   */
   getUserInfo: function (openid) {
     db.collection("Users")
       .where({
@@ -447,5 +453,96 @@ Page({
         }
       },
     });
+  },
+
+  // 加入项目
+  joinProject: function (e) {
+    const projectId = e.currentTarget.dataset.id;
+    if (!projectId) {
+      wx.showToast({
+        title: "项目ID缺失",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showLoading({
+      title: "正在加入...",
+      mask: true,
+    });
+
+    wx.cloud
+      .callFunction({
+        name: "joinProject",
+        data: { projectId: projectId },
+      })
+      .then((res) => {
+        wx.hideLoading();
+        if (res.result.success) {
+          wx.showToast({
+            title: "加入成功",
+            icon: "success",
+          });
+          // 重新获取项目详情以更新参与人数和按钮状态
+          this.fetchProjects(this.data.openid);
+        } else {
+          wx.showToast({
+            title: res.result.error || "加入失败",
+            icon: "none",
+          });
+        }
+      })
+      .catch((err) => {
+        wx.hideLoading();
+        console.error("加入项目失败:", err);
+        wx.showToast({
+          title: "加入失败",
+          icon: "none",
+        });
+      });
+  },
+
+  // 切换“您创建的项目”显示状态
+  toggleCreatedProjects: function () {
+    this.setData({
+      showCreatedProjects: !this.data.showCreatedProjects,
+    });
+  },
+
+  // 切换“您加入的项目”显示状态
+  toggleJoinedProjects: function () {
+    this.setData({
+      showJoinedProjects: !this.data.showJoinedProjects,
+    });
+  },
+
+  // 获取项目状态对应的图标
+  getStatusIcon: function (status) {
+    // 根据项目状态返回不同的图标类型
+    // 需要根据实际项目状态进行调整
+    switch (status) {
+      case "进行中":
+        return "info";
+      case "已完成":
+        return "success";
+      case "已取消":
+        return "cancel";
+      default:
+        return "info";
+    }
+  },
+
+  // 获取项目状态对应的颜色
+  getStatusColor: function (status) {
+    switch (status) {
+      case "进行中":
+        return "#1aad19"; // 绿色
+      case "已完成":
+        return "#1aad19"; // 绿色
+      case "已取消":
+        return "#ff4d4f"; // 红色
+      default:
+        return "#555555"; // 灰色
+    }
   },
 });

@@ -2,7 +2,7 @@
 <view class="container">
   <!-- 用户信息部分 -->
   <view class="user-info">
-    <image class="avatar" src="{{user.avatarUrl || '/assets/default-avatar.png'}}"></image>
+    <image class="avatar" src="{{user.avatarUrl}}"></image>
     <view class="user-details">
       <text class="nick-name">{{user.nickName || '未设置昵称'}}</text>
       <text class="username">用户名: {{user.username || '未设置'}}</text>
@@ -12,56 +12,66 @@
 
   <!-- 用户创建的项目 -->
   <view class="projects-section">
-    <text class="section-title">您创建的项目</text>
-    <block wx:for="{{createdProjects}}" wx:key="_id">
-      <view class="project-card" bindtap="goToDetail" data-id="{{item._id}}">
-        <view class="project-info">
-          <text class="project-name">{{item.name}}</text>
-          <text class="project-description">{{item.description}}</text>
-          <view class="project-details">
-            <text class="member-count">参与人数: {{item.participantCount}}</text>
-            <text class="publish-time">发布于{{item.createdAtFormatted}}</text>
+    <view class="section-header" bindtap="toggleCreatedProjects">
+      <text class="section-title">您创建的项目</text>
+      <text class="toggle-icon">{{showCreatedProjects ? '▲' : '▼'}}</text>
+    </view>
+    <view wx:if="{{showCreatedProjects}}">
+      <block wx:for="{{createdProjects}}" wx:key="_id">
+        <view class="project-card" bindtap="goToDetail" data-id="{{item._id}}">
+          <view class="project-info">
+            <text class="project-name">{{item.name}}</text>
+            <text class="project-description">{{item.description}}</text>
+            <view class="project-details">
+              <text class="member-count">参与人数: {{item.participantCount}}</text>
+              <text class="publish-time">发布于{{item.createdAtFormatted}}</text>
+            </view>
+            <view class="project-status">
+              <icon type="{{getStatusIcon(item.status)}}" size="16" color="{{getStatusColor(item.status)}}"></icon>
+              <text class="status-text">{{item.status}}</text>
+            </view>
           </view>
-          <view class="project-status">
-            <icon type="{{getStatusIcon(item.status)}}" size="16" color="{{getStatusColor(item.status)}}"></icon>
-            <text class="status-text">{{item.status}}</text>
+          <view class="project-actions">
+            <!-- 仅项目创建者可以删除项目 -->
+            <button bindtap="deleteProject" data-id="{{item._id}}" class="delete-btn">删除项目</button>
           </view>
         </view>
-        <view class="project-actions">
-          <!-- 仅项目创建者可以删除项目 -->
-          <button bindtap="deleteProject" data-id="{{item._id}}" class="delete-btn">删除项目</button>
-        </view>
+      </block>
+      <view wx:if="{{createdProjects.length === 0}}" class="no-projects">
+        <text>您尚未创建任何项目。</text>
       </view>
-    </block>
-    <view wx:if="{{createdProjects.length === 0}}" class="no-projects">
-      <text>您尚未创建任何项目。</text>
     </view>
   </view>
 
   <!-- 用户加入的项目 -->
   <view class="projects-section">
-    <text class="section-title">您加入的项目</text>
-    <block wx:for="{{joinedProjects}}" wx:key="_id">
-      <view class="project-card" bindtap="goToDetail" data-id="{{item._id}}">
-        <view class="project-info">
-          <text class="project-name">{{item.name}}</text>
-          <text class="project-description">{{item.description}}</text>
-          <view class="project-details">
-            <text class="member-count">参与人数: {{item.participantCount}}</text>
-            <text class="publish-time">发布于{{item.createdAtFormatted}}</text>
+    <view class="section-header" bindtap="toggleJoinedProjects">
+      <text class="section-title">您加入的项目</text>
+      <text class="toggle-icon">{{showJoinedProjects ? '▲' : '▼'}}</text>
+    </view>
+    <view wx:if="{{showJoinedProjects}}">
+      <block wx:for="{{joinedProjects}}" wx:key="_id">
+        <view class="project-card" bindtap="goToDetail" data-id="{{item._id}}">
+          <view class="project-info">
+            <text class="project-name">{{item.name}}</text>
+            <text class="project-description">{{item.description}}</text>
+            <view class="project-details">
+              <text class="member-count">参与人数: {{item.participantCount}}</text>
+              <text class="publish-time">发布于{{item.createdAtFormatted}}</text>
+            </view>
+            <view class="project-status">
+              <icon type="{{getStatusIcon(item.status)}}" size="16" color="{{getStatusColor(item.status)}}"></icon>
+              <text class="status-text">{{item.status}}</text>
+            </view>
           </view>
-          <view class="project-status">
-            <icon type="{{getStatusIcon(item.status)}}" size="16" color="{{getStatusColor(item.status)}}"></icon>
-            <text class="status-text">{{item.status}}</text>
+          <view class="project-actions">
+            <button bindtap="exitProject" data-id="{{item._id}}" class="exit-btn">退出项目</button>
           </view>
         </view>
-        <view class="project-actions">
-          <button bindtap="exitProject" data-id="{{item._id}}" class="exit-btn">退出项目</button>
-        </view>
+      </block>
+      <view wx:if="{{joinedProjects.length === 0}}" class="no-projects">
+        <text>您尚未加入任何项目。</text>
       </view>
-    </block>
-    <view wx:if="{{joinedProjects.length === 0}}" class="no-projects">
-      <text>您尚未加入任何项目。</text>
     </view>
   </view>
 

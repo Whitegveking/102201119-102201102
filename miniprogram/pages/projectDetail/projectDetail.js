@@ -11,78 +11,121 @@ Page({
     newMessage: "",
     projectId: "",
     messageWatcher: null,
-    openid: "", // 添加 openid
+    openid: "", // 当前用户的 openid
+    username: "", // 当前用户的用户名
+    availableStatuses: ["进行中", "已完成", "已取消"], // 可选的项目状态
+    selectedStatusIndex: 0, // 当前选中的项目状态索引
+    selectedStatus: "进行中", // 当前选中的项目状态
+    showStatusPicker: false, // 控制状态选择器的显示
   },
 
   onLoad: function (options) {
     const projectId = options.id;
-    this.setData({ projectId });
-
-    if (projectId) {
-      this.fetchOpenId().then(() => {
-        this.fetchProjectDetail(projectId);
-        this.fetchChatroom(projectId);
-      });
-    } else {
+    if (!projectId) {
       wx.showToast({
         title: "项目ID缺失",
         icon: "none",
       });
+      return;
     }
+
+    this.setData({ projectId });
+
+    // 获取当前用户的 openid 和 username
+    this.fetchUserInfo()
+      .then(() => {
+        // 获取项目详情
+        this.fetchProjectDetail(projectId);
+        // 获取聊天室信息并设置实时监听
+        this.fetchChatroom(projectId);
+      })
+      .catch((err) => {
+        console.error("获取用户信息失败:", err);
+        wx.showToast({
+          title: "获取用户信息失败",
+          icon: "none",
+        });
+      });
   },
 
   onUnload: function () {
-    // 取消监听
+    // 取消实时监听
     if (this.data.messageWatcher) {
       this.data.messageWatcher.close();
     }
   },
 
-  // 获取当前用户的 openid
-  fetchOpenId: function () {
+  /**
+   * 获取当前用户的 openid 和 username
+   */
+  fetchUserInfo: function () {
     return new Promise((resolve, reject) => {
       const openid = wx.getStorageSync("openid");
-      if (openid) {
-        this.setData({ openid });
-        resolve(openid);
+      const username = wx.getStorageSync("username");
+
+      if (openid && username) {
+        this.setData({ openid, username });
+        resolve();
       } else {
+        // 调用云函数获取 openid
         wx.cloud
           .callFunction({
             name: "getOpenId",
             data: {},
           })
           .then((res) => {
-            const openid = res.result.openid;
-            if (openid) {
-              wx.setStorageSync("openid", openid);
-              this.setData({ openid });
-              resolve(openid);
+            const fetchedOpenid = res.result.openid;
+            if (fetchedOpenid) {
+              wx.setStorageSync("openid", fetchedOpenid);
+              this.setData({ openid: fetchedOpenid });
+
+              // 假设用户名已经在登录时获取并存储
+              const fetchedUsername = wx.getStorageSync("username");
+              if (fetchedUsername) {
+                this.setData({ username: fetchedUsername });
+                resolve();
+              } else {
+                wx.showToast({
+                  title: "用户名未设置",
+                  icon: "none",
+                });
+                reject("用户名未设置");
+              }
             } else {
-              console.error(
-                "Failed to fetch openid from cloud function result"
-              );
-              reject("Failed to fetch openid");
+              wx.showToast({
+                title: "获取 OpenID 失败",
+                icon: "none",
+              });
+              reject("获取 OpenID 失败");
             }
           })
           .catch((err) => {
-            console.error("Failed to get OpenID:", err);
+            console.error("调用 getOpenId 云函数失败:", err);
+            wx.showToast({
+              title: "获取用户信息失败",
+              icon: "none",
+            });
             reject(err);
           });
       }
     });
   },
 
-  // 格式化时间戳为可读格式
+  /**
+   * 格式化时间戳为可读格式
+   */
   formatTimestamp: function (timestamp) {
     const date = new Date(timestamp);
     return date.toLocaleString();
   },
 
-  // 调用云函数获取项目详情和创建者用户名
+  /**
+   * 调用云函数获取项目详情和创建者用户名
+   */
   fetchProjectDetail: function (projectId) {
     wx.cloud
       .callFunction({
-        name: "getProjects",
+        name: "getProjects", // 确保云函数名称正确
         data: { projectId: projectId },
       })
       .then((res) => {
@@ -90,18 +133,25 @@ Page({
           const project = res.result.project;
           const creatorUsername = res.result.creatorUsername;
 
-          // 获取当前用户的 openid
           const openid = this.data.openid;
-
-          // 判断当前用户是否为创建者或已加入项目
           const isCreator = project.creator === openid;
           const isMember = project.members && project.members.includes(openid);
+
+          // 找到当前状态的索引
+          const statusIndex = this.data.availableStatuses.indexOf(
+            project.status
+          );
+          const selectedStatusIndex = statusIndex !== -1 ? statusIndex : 0;
+          const selectedStatus =
+            this.data.availableStatuses[selectedStatusIndex];
 
           this.setData({
             project: project,
             creatorUsername: creatorUsername,
             isCreator: isCreator,
             isMember: isMember,
+            selectedStatusIndex: selectedStatusIndex,
+            selectedStatus: selectedStatus,
           });
         } else {
           wx.showToast({
@@ -111,7 +161,7 @@ Page({
         }
       })
       .catch((err) => {
-        console.error("Failed to call getProjects:", err);
+        console.error("调用 getProjects 云函数失败:", err);
         wx.showToast({
           title: "获取项目详情失败",
           icon: "none",
@@ -119,7 +169,9 @@ Page({
       });
   },
 
-  // 获取聊天室数据并设置实时监听
+  /**
+   * 获取聊天室数据并设置实时监听
+   */
   fetchChatroom: function (projectId) {
     const db = wx.cloud.database();
     const _ = db.command;
@@ -175,7 +227,7 @@ Page({
               });
             })
             .catch((err) => {
-              console.error("Failed to create chatroom:", err);
+              console.error("创建聊天室失败:", err);
               wx.showToast({
                 title: "创建聊天室失败",
                 icon: "none",
@@ -184,7 +236,7 @@ Page({
         }
       })
       .catch((err) => {
-        console.error("Failed to fetch chatroom:", err);
+        console.error("获取聊天室失败:", err);
         wx.showToast({
           title: "获取聊天室失败",
           icon: "none",
@@ -192,16 +244,21 @@ Page({
       });
   },
 
-  // 处理新消息输入
+  /**
+   * 处理新消息输入
+   */
   handleMessageInput: function (e) {
     this.setData({
       newMessage: e.detail.value,
     });
   },
 
-  // 发送新消息
+  /**
+   * 发送新消息
+   */
   sendMessage: function () {
-    const { newMessage, projectId } = this.data;
+    const { newMessage, projectId, openid, username } = this.data;
+
     if (!newMessage.trim()) {
       wx.showToast({
         title: "消息不能为空",
@@ -209,13 +266,6 @@ Page({
       });
       return;
     }
-
-    const db = wx.cloud.database();
-    const _ = db.command;
-    const openid = this.data.openid; // 已获取的 openid
-    const username = wx.getStorageSync("username"); // 确保已存储 username
-
-    console.log("发送消息的用户名:", username); // 添加日志
 
     if (!username) {
       wx.showToast({
@@ -225,10 +275,13 @@ Page({
       return;
     }
 
+    const db = wx.cloud.database();
+    const _ = db.command;
+
     const message = {
       senderOpenid: openid,
       senderUsername: username,
-      content: newMessage,
+      content: newMessage.trim(),
       timestamp: new Date().toISOString(),
     };
 
@@ -242,16 +295,23 @@ Page({
         },
       })
       .then((res) => {
-        this.setData({
-          newMessage: "",
-        });
-        wx.showToast({
-          title: "发送成功",
-          icon: "success",
-        });
+        if (res.stats.updated > 0) {
+          this.setData({
+            newMessage: "",
+          });
+          wx.showToast({
+            title: "发送成功",
+            icon: "success",
+          });
+        } else {
+          wx.showToast({
+            title: "发送失败，请重试",
+            icon: "none",
+          });
+        }
       })
       .catch((err) => {
-        console.error("Failed to send message:", err);
+        console.error("发送消息失败:", err);
         wx.showToast({
           title: "发送失败",
           icon: "none",
@@ -259,7 +319,9 @@ Page({
       });
   },
 
-  // 退出项目
+  /**
+   * 退出项目
+   */
   exitProject: function (e) {
     const projectId = e.currentTarget.dataset.id;
     if (!projectId) {
@@ -303,7 +365,7 @@ Page({
             })
             .catch((err) => {
               wx.hideLoading();
-              console.error("Failed to call exitProject:", err);
+              console.error("退出项目失败:", err);
               wx.showToast({
                 title: "退出项目失败",
                 icon: "none",
@@ -314,7 +376,9 @@ Page({
     });
   },
 
-  // 删除项目
+  /**
+   * 删除项目
+   */
   deleteProject: function (e) {
     const projectId = e.currentTarget.dataset.id;
     if (!projectId) {
@@ -358,7 +422,7 @@ Page({
             })
             .catch((err) => {
               wx.hideLoading();
-              console.error("Failed to call deleteProject:", err);
+              console.error("删除项目失败:", err);
               wx.showToast({
                 title: "删除项目失败",
                 icon: "none",
@@ -369,7 +433,9 @@ Page({
     });
   },
 
-  // 添加 joinProject 方法
+  /**
+   * 加入项目
+   */
   joinProject: function (e) {
     const projectId = e.currentTarget.dataset.id;
     if (!projectId) {
@@ -408,11 +474,104 @@ Page({
       })
       .catch((err) => {
         wx.hideLoading();
-        console.error("Failed to call joinProject:", err);
+        console.error("加入项目失败:", err);
         wx.showToast({
           title: "加入失败",
           icon: "none",
         });
       });
+  },
+
+  /**
+   * 打开状态选择器
+   */
+  openStatusPicker: function () {
+    this.setData({
+      showStatusPicker: true,
+    });
+  },
+
+  /**
+   * 关闭状态选择器
+   */
+  closeStatusPicker: function () {
+    this.setData({
+      showStatusPicker: false,
+    });
+  },
+
+  /**
+   * 阻止点击选择器内部关闭选择器
+   */
+  preventClose: function (e) {
+    // 不做任何操作，阻止事件冒泡
+  },
+
+  /**
+   * 处理状态选择
+   */
+  handleStatusChange: function (e) {
+    const newStatusIndex = e.detail.value;
+    const newStatus = this.data.availableStatuses[newStatusIndex];
+    const selectedStatus = this.data.selectedStatus;
+
+    if (newStatus === selectedStatus) {
+      wx.showToast({
+        title: "状态未变化",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showModal({
+      title: "确认更改状态",
+      content: `将项目状态从 "${selectedStatus}" 更改为 "${newStatus}"？`,
+      success: (res) => {
+        if (res.confirm) {
+          wx.showLoading({
+            title: "更新中...",
+            mask: true,
+          });
+
+          wx.cloud
+            .callFunction({
+              name: "updateProjectStatus",
+              data: {
+                projectId: this.data.projectId,
+                newStatus: newStatus,
+              },
+            })
+            .then((res) => {
+              wx.hideLoading();
+              if (res.result.success) {
+                wx.showToast({
+                  title: "状态更新成功",
+                  icon: "success",
+                });
+                // 更新本地项目状态
+                this.setData({
+                  selectedStatusIndex: newStatusIndex,
+                  selectedStatus: newStatus,
+                  "project.status": newStatus,
+                  showStatusPicker: false,
+                });
+              } else {
+                wx.showToast({
+                  title: res.result.error || "状态更新失败",
+                  icon: "none",
+                });
+              }
+            })
+            .catch((err) => {
+              wx.hideLoading();
+              console.error("状态更新失败:", err);
+              wx.showToast({
+                title: "状态更新失败",
+                icon: "none",
+              });
+            });
+        }
+      },
+    });
   },
 });
