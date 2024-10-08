@@ -1,91 +1,351 @@
 /* pages/projectDetail/projectDetail.wxss */
+
 .container {
   padding: 20px;
+  background-color: #c7e7f7; /* 与首页一致的背景色 */
+  min-height: 100vh;
 }
 
-.project-info {
+/* 项目详情部分 */
+.project-details {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
   margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .project-name {
   font-size: 24px;
   font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 10px;
 }
 
 .project-description {
   font-size: 16px;
-  margin-top: 10px;
+  color: #555555;
+  margin-bottom: 15px;
 }
 
-.project-creator {
+.creator-info,
+.member-count,
+.project-status-display {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.creator-text,
+.member-count text,
+.status-text {
+  margin-left: 8px;
   font-size: 14px;
-  color: gray;
-  margin-top: 5px;
+  color: #555555;
 }
 
-.join-btn {
+/* 项目状态展示 */
+.project-status-display {
+  font-size: 16px;
+  color: #333333;
+}
+
+/* 更改项目状态按钮 */
+.change-status-btn {
+  margin-top: 15px;
   background-color: #1aad19;
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.creator-label,
-.member-label {
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 20px;
+.change-status-btn:hover {
+  background-color: #179b16;
 }
 
-.chatroom {
-  border-top: 1px solid #eee;
-  padding-top: 20px;
-}
-
-.messages {
-  max-height: 300px;
-  overflow-y: scroll;
-  margin-bottom: 10px;
-}
-
-.message {
-  margin-bottom: 10px;
-}
-
-.sender {
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.content {
-  display: inline;
-}
-
-.timestamp {
-  font-size: 12px;
-  color: #999;
-  margin-left: 5px;
-}
-
-.input-area {
+/* 操作按钮部分 */
+.project-actions {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
 }
 
-.input-area input {
-  flex: 1;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 8px;
-}
-
-.send-btn {
+.join-btn {
+  width: 100%;
+  padding: 12px;
   background-color: #1aad19;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
-  margin-left: 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 10px;
+}
+
+.join-btn:hover {
+  background-color: #179b16;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.small-btn {
+  flex: 1;
+  padding: 10px;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-btn {
+  background-color: #f5222d;
+}
+
+.exit-btn {
+  background-color: #d9d9d9;
+  color: #333333;
+}
+
+.small-btn:hover {
+  opacity: 0.9;
+}
+
+/* 无项目提示样式 */
+.no-projects {
+  text-align: center;
+  font-size: 16px;
+  color: #999999;
+  padding: 20px 0;
+}
+
+/* 聊天室部分 */
+.chat-section {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333333;
+}
+
+.chat-container {
+  height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: scroll;
+  background-color: #f9f9f9;
+  margin-bottom: 15px;
+}
+
+.message-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #e6f7ff;
+}
+
+.own-message {
+  background-color: #d9f7be;
+  align-self: flex-end;
+}
+
+.other-message {
+  background-color: #e6f7ff;
+  align-self: flex-start;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.message-sender {
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.message-timestamp {
+  font-size: 12px;
+  color: #999999;
+}
+
+.message-content {
+  font-size: 14px;
+  color: #333333;
+}
+
+/* 发送消息部分 */
+.message-input-container {
+  display: flex;
+  gap: 10px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #ffffff;
+}
+
+.send-btn {
+  padding: 10px 16px;
+  background-color: #1aad19;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.send-btn:hover {
+  background-color: #179b16;
+}
+
+/* 状态选择器（Picker）样式 */
+.picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001; /* 高于其他元素 */
+}
+
+.picker-modal {
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.picker-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.picker-header icon {
+  cursor: pointer;
+}
+
+.picker-container {
+  font-size: 16px;
+  color: #555555;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* 更改项目状态按钮样式 */
+.change-status-btn {
+  margin-top: 15px;
+  background-color: #1aad19;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.change-status-btn:hover {
+  background-color: #179b16;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+
+  .project-details {
+    padding: 15px;
+  }
+
+  .project-name {
+    font-size: 20px;
+  }
+
+  .project-description {
+    font-size: 14px;
+  }
+
+  .creator-text,
+  .member-count text,
+  .status-text {
+    font-size: 12px;
+  }
+
+  .join-btn,
+  .send-btn,
+  .change-status-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .small-btn {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .chat-container {
+    height: 200px;
+  }
+
+  .message-content {
+    font-size: 13px;
+  }
+
+  /* 状态选择器（Picker）适配 */
+  .picker-modal {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .picker-title {
+    font-size: 16px;
+  }
+
+  .picker-container {
+    font-size: 14px;
+  }
 }
